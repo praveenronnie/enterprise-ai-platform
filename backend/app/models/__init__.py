@@ -1,0 +1,1 @@
+"""Domain models — business entities and value objects."""

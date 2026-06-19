@@ -1,0 +1,1 @@
+"""Configuration layer — Pydantic Settings and environment loading."""

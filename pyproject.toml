@@ -1,0 +1,27 @@
+[project]
+name = "document-intelligence-platform"
+version = "0.1.0"
+description = "Enterprise AI Document Intelligence Platform"
+requires-python = ">=3.11"
+
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "docling",
+    "langgraph",
+    "langchain",
+    "langchain-core",
+    "qdrant-client",
+    "ollama",
+    "redis",
+    "celery",
+    "loguru",
+    "pydantic>=2.10",
+    "pydantic-settings",
+    "python-dotenv",
+    "python-multipart",
+    "orjson",
+    "httpx",
+    "sentence-transformers"
+]
+[tool.uv]
