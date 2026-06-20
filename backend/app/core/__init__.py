@@ -1,1 +1,0 @@
-"""Core layer — application lifecycle, logging, exception handlers."""

@@ -1,1 +1,0 @@
-"""Dependency injection — FastAPI dependencies for DI wiring."""

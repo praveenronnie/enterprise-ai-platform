@@ -1,1 +1,1 @@
-"""Plugin system — extensible module loader for AI capabilities."""
+# Package init

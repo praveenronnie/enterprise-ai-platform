@@ -1,1 +1,0 @@
-"""Middleware layer — request/response processing."""

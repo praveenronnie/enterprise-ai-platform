@@ -1,1 +1,1 @@
-"""Test suite package."""
+# Package init
