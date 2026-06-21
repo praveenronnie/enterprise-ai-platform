@@ -74,9 +74,9 @@ class ConfigurationManager:
     def _build_llm(self) -> LLMSettings:
         return LLMSettings(
             LLM_PROVIDER=self._raw.get("LLM_PROVIDER", ""),
-            LLM_API_KEY=self._raw.get("OPENROUTER_API_KEY", ""),
-            LLM_BASE_URL=self._raw.get("OPENROUTER_BASE_URL", ""),
-            LLM_MODEL=self._raw.get("CHAT_MODEL", ""),
+            LLM_API_KEY=self._raw.get("LLM_API_KEY", ""),
+            LLM_BASE_URL=self._raw.get("LLM_BASE_URL", ""),
+            LLM_MODEL=self._raw.get("AI_DEFAULT_MODEL", ""),
             LLM_TEMPERATURE=self._raw.get("LLM_TEMPERATURE", 0.0),
             LLM_MAX_TOKENS=self._raw.get("LLM_MAX_TOKENS", 0),
             LLM_TIMEOUT=self._raw.get("LLM_TIMEOUT", 0),
