@@ -1,25 +1,37 @@
-# Virtual Environment
-.venv/
-
-# Environment Variables
-.env
-!.env.example
-
 # Python
 __pycache__/
 *.py[cod]
+*.egg-info/
+dist/
+build/
 
-# Testing
-.pytest_cache/
+# Virtual environments
+.venv/
+venv/
+dev.venv/
+
+# Environment
+.env
 
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# OS Files
+# OS
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
-logs/
+storage/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+.dockerignore
+
+# Local storage
+storage/

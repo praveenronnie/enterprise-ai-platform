@@ -7,6 +7,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from backend.app.platform.api.v1.ai import router as ai_router
+from backend.app.platform.api.v1.document import router as document_router
 from backend.app.platform.api.v1.health import router as health_router
 from backend.app.platform.api.v1.version import router as version_router
 from backend.app.platform.config import ConfigurationManager, EnvironmentLoader
@@ -52,6 +53,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     PREFIX = settings.API_PREFIX
 
     app.include_router(ai_router, prefix=PREFIX, tags=["ai"])
+    app.include_router(document_router, prefix=PREFIX, tags=["documents"])
     app.include_router(health_router, prefix=PREFIX, tags=["system"])
     app.include_router(version_router, prefix=PREFIX, tags=["system"])
 
