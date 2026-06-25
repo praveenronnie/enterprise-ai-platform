@@ -1,26 +1,37 @@
 from pathlib import Path
 from uuid import uuid4
-from pprint import pprint
 
-from fastapi import APIRouter, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 import aiofiles
 
+from backend.app.agents.ingestion.pipeline import IngestionPipeline
 from backend.app.platform.config.storage import StorageManager
+from backend.app.platform.dependencies.container import container
 from backend.app.shared.models.models import Document
-from backend.app.shared.services.document_processor import process_document
 
 router = APIRouter()
 
 
+def get_ingestion_pipeline() -> IngestionPipeline:
+    pipeline = container.resolve("ingestion_pipeline")
+    if not pipeline:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Ingestion pipeline not available.",
+        )
+    return pipeline
+
+
 @router.post(
     "/documents/upload",
-    response_model=Document,
     summary="Upload and process a PDF document",
-    description="Accepts a PDF file via multipart/form-data, processes it with Docling, and returns the extracted document data.",
+    description="Accepts a PDF file via multipart/form-data, processes it with Docling, detects type, extracts via plugin, and performs incremental indexing.",
 )
 async def upload_document(
     file: UploadFile = File(..., description="PDF file to process"),
-) -> Document:
+    user_id: str | None = None,
+    pipeline: IngestionPipeline = Depends(get_ingestion_pipeline),
+) -> dict:
     if file.content_type != "application/pdf":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -35,7 +46,6 @@ async def upload_document(
     filename = Path(file.filename or "document.pdf").name
     file_path = upload_dir / filename
 
-    # try:
     content = await file.read()
     async with aiofiles.open(file_path, "wb") as f:
         await f.write(content)
@@ -49,18 +59,15 @@ async def upload_document(
         binary_hash="",
     )
 
-    result = process_document(
-        file_path=file_path,
-        document=document,
-    )
-
-    pprint(result.model_dump())
-    return result
-
-    """except Exception as exc:
+    try:
+        result = await pipeline.run(
+            file_path=file_path, document=document, user_id=user_id
+        )
+        return result
+    except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Document processing failed: {exc}",
         )
     finally:
-        await file.close()"""
+        await file.close()

@@ -2,8 +2,7 @@
 from __future__ import annotations
 
 import logging
-from typing import ClassVar
-
+import numpy as np
 from sentence_transformers import SentenceTransformer
 
 from backend.app.platform.ai.exceptions import EmbeddingError
@@ -12,21 +11,18 @@ logger = logging.getLogger(__name__)
 
 
 class EmbeddingService:
-
-    _model: ClassVar[SentenceTransformer | None] = None
-
     def __init__(self, model_name: str) -> None:
         self._model_name = model_name
 
-    def _load_model(self) -> SentenceTransformer:
-        if EmbeddingService._model is None:
-            try:
-                EmbeddingService._model = SentenceTransformer(self._model_name)
-            except Exception as exc:
-                raise EmbeddingError(
-                    f"Failed to load embedding model '{self._model_name}': {exc}"
-                ) from exc
-        return EmbeddingService._model
+        logger.info("Loading embedding model: %s", model_name)
+        try:
+            self._model = SentenceTransformer(model_name)
+            logger.info("Embedding model loaded successfully")
+        except Exception as exc:
+            logger.exception("Failed to load embedding model")
+            raise EmbeddingError(
+                f"Failed to load embedding model '{model_name}': {exc}"
+            ) from exc
 
     @property
     def model_name(self) -> str:
@@ -35,13 +31,12 @@ class EmbeddingService:
     def embed(self, texts: list[str]) -> list[list[float]]:
         if not texts:
             raise EmbeddingError("Cannot embed empty text list")
-        model = self._load_model()
+
         try:
-            embeddings = model.encode(texts, convert_to_numpy=False)
-            return [list(vec) for vec in embeddings]
+            embeddings = self._model.encode(texts, convert_to_numpy=False)
+            return np.asarray(embeddings)
         except Exception as exc:
             raise EmbeddingError(f"Embedding generation failed: {exc}") from exc
 
     def embed_dimensions(self) -> int:
-        model = self._load_model()
-        return model.get_embedding_dimension()
+        return self._model.get_embedding_dimension()

@@ -35,3 +35,7 @@ htmlcov/
 
 # Local storage
 storage/
+
+# Helper files
+cline_rules/
+cmd.txt

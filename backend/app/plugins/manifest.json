@@ -1,0 +1,26 @@
+{
+  "plugins": [
+    {
+      "plugin_type": "resume",
+      "display_name": "Resume Parser",
+      "module": "resume",
+      "graph_worthy": true,
+      "enabled": true,
+      "preferred_provider": null,
+      "output_model": "backend.app.plugins.resume.models.ResumeExtraction",
+      "class": "backend.app.plugins.resume.extractor.ResumePlugin",
+      "extraction_prompt": "You are a resume parsing assistant. Extract structured information from the following resume text. Return only valid JSON matching the schema."
+    },
+    {
+      "plugin_type": "logistics",
+      "display_name": "Logistics Document Parser",
+      "module": "logistics",
+      "graph_worthy": true,
+      "enabled": true,
+      "preferred_provider": null,
+      "output_model": "backend.app.plugins.logistics.models.LogisticsExtraction",
+      "class": "backend.app.plugins.logistics.extractor.LogisticsPlugin",
+      "extraction_prompt": "You are a logistics document parsing assistant. Extract structured shipment information from the following document text. Return only valid JSON matching the schema."
+    }
+  ]
+}

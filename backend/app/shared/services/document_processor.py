@@ -15,6 +15,7 @@ from docling_core.types.doc.document import (
 
 from backend.app.shared.models.models import Chunk, Document, Image, Table
 from backend.app.platform.config.storage import StorageManager
+from backend.app.shared.utils.chunk_differ import assign_chunk_hashes
 
 # Extraction tasks run concurrently via ThreadPoolExecutor (mix of I/O and
 # light CPU work). DoclingDocument is read-only during extraction — no
@@ -344,6 +345,7 @@ def process_document(
     document.has_images = len(images) > 0
     document.tables = tables
     document.has_tables = len(tables) > 0
+    assign_chunk_hashes(chunks)
     document.chunks = chunks
     document.headings = headings
     document.binary_hash = str(result.document.origin.binary_hash)

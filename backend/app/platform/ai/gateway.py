@@ -12,6 +12,8 @@ from backend.app.platform.ai.schemas import (
     GenerateResponse,
 )
 
+from sentence_transformers import SentenceTransformer
+
 logger = logging.getLogger(__name__)
 
 
@@ -23,7 +25,9 @@ class AIGateway:
 
     async def generate(self, request: GenerateRequest) -> GenerateResponse:
         try:
-            messages = [{"role": m.role, "content": m.content} for m in request.messages]
+            messages = [
+                {"role": m.role, "content": m.content} for m in request.messages
+            ]
             result = await self._provider.chat_completion(
                 messages=messages,
                 model=request.model,
@@ -46,10 +50,11 @@ class AIGateway:
             model_name = request.model or self._embedding_service.model_name
             vectors = self._embedding_service.embed(request.texts)
             return EmbeddingResponse(
-                embeddings=vectors,
+                embeddings=vectors.tolist(),
                 model=model_name,
-                dimensions=len(vectors[0]) if vectors else 0,
+                dimensions=vectors.shape[1] if len(vectors) else 0,
             )
+
         except Exception as exc:
             if isinstance(exc, GatewayError):
                 raise

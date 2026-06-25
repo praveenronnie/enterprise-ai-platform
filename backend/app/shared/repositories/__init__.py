@@ -1,1 +1,1 @@
-# Package init
+"""Data access layer for document storage and retrieval."""

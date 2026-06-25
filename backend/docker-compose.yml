@@ -1,25 +1,21 @@
 # =============================================================================
-# Enterprise AI Platform — Infrastructure Services
-# =============================================================================
-# Starts all infrastructure required for local development.
+# Enterprise Document Engine - Local Development
 #
 # Services:
-#   - PostgreSQL
+#   - PostgreSQL 18
 #   - Redis
 #   - Qdrant
 #   - Neo4j
 #
-# Usage:
+# Start:
 #   docker compose up -d
 #
 # Stop:
 #   docker compose down
 #
-# Remove volumes:
+# Remove all data:
 #   docker compose down -v
 # =============================================================================
-
-version: "3.9"
 
 services:
 
@@ -27,19 +23,23 @@ services:
   # PostgreSQL
   # ===========================================================================
   postgres:
-    image: postgres:18-alpine
-    container_name: enterprise-ai-postgres
+    image: postgres:16
+    container_name: document-engine-postgres
     restart: unless-stopped
+
     environment:
-      POSTGRES_DB: enterprise_ai
+      POSTGRES_DB: document_engine
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: Praveen@2000
+
     ports:
-      - "5432:5432"
+      - "5433:5432"      # Use 5433 if local PostgreSQL is already running
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d document_engine"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -49,29 +49,34 @@ services:
   # ===========================================================================
   redis:
     image: redis:7-alpine
-    container_name: enterprise-ai-redis
+    container_name: document-engine-redis
     restart: unless-stopped
+
     ports:
       - "6379:6379"
+
     volumes:
       - redis_data:/data
+
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-
   # ===========================================================================
   # Qdrant
   # ===========================================================================
   qdrant:
     image: qdrant/qdrant:latest
-    container_name: enterprise-ai-qdrant
+    container_name: document-engine-qdrant
     restart: unless-stopped
+
     ports:
+
       - "6333:6333"
       - "6334:6334"
+
     volumes:
       - qdrant_data:/qdrant/storage
 
@@ -80,20 +85,19 @@ services:
   # ===========================================================================
   neo4j:
     image: neo4j:5
-    container_name: enterprise-ai-neo4j
+    container_name: document-engine-neo4j
     restart: unless-stopped
+
     environment:
       NEO4J_AUTH: neo4j/password
+
     ports:
       - "7474:7474"
       - "7687:7687"
+
     volumes:
       - neo4j_data:/data
-      - neo4j_logs:/logs
 
-# =============================================================================
-# Persistent Volumes
-# =============================================================================
 volumes:
   postgres_data:
   redis_data:

@@ -7,8 +7,10 @@ import uvicorn
 from fastapi import FastAPI
 
 from backend.app.platform.api.v1.ai import router as ai_router
+from backend.app.platform.api.v1.chat import router as chat_router
 from backend.app.platform.api.v1.document import router as document_router
 from backend.app.platform.api.v1.health import router as health_router
+from backend.app.platform.api.v1.plugins import router as plugins_router
 from backend.app.platform.api.v1.version import router as version_router
 from backend.app.platform.config import ConfigurationManager, EnvironmentLoader
 from backend.app.platform.config.settings import Settings
@@ -56,6 +58,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(document_router, prefix=PREFIX, tags=["documents"])
     app.include_router(health_router, prefix=PREFIX, tags=["system"])
     app.include_router(version_router, prefix=PREFIX, tags=["system"])
+    app.include_router(chat_router, prefix=PREFIX, tags=["chat"])
+    app.include_router(plugins_router, prefix=PREFIX, tags=["plugins"])
 
     logger.info(
         "Application '%s' v%s initialised (debug=%s)",

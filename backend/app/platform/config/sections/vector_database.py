@@ -26,3 +26,4 @@ class VectorDatabaseSettings(BaseModel):
         pattern=r"^(cosine|euclidean|dotproduct)$",
         description="Distance metric for similarity search.",
     )
+    VECTOR_EMDEDDING: str = Field(description="Embedding model")

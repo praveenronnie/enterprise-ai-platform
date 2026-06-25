@@ -91,15 +91,16 @@ class ConfigurationManager:
             VECTOR_DB_INDEX_NAME=self._raw.get("VECTOR_DB_INDEX_NAME", ""),
             VECTOR_DB_DIMENSION=self._raw.get("VECTOR_DB_DIMENSION", 0),
             VECTOR_DB_METRIC=self._raw.get("VECTOR_DB_METRIC", ""),
+            VECTOR_EMDEDDING=self._raw.get("EMBEDDING_MODEL", ""),
         )
 
     def _build_graph_database(self) -> GraphDatabaseSettings:
         return GraphDatabaseSettings(
             GRAPH_DB_PROVIDER=self._raw.get("GRAPH_DB_PROVIDER", ""),
-            GRAPH_DB_URL=self._raw.get("GRAPH_DB_URL", ""),
-            GRAPH_DB_USER=self._raw.get("GRAPH_DB_USER", ""),
-            GRAPH_DB_PASSWORD=self._raw.get("GRAPH_DB_PASSWORD", ""),
-            GRAPH_DB_DATABASE=self._raw.get("GRAPH_DB_DATABASE", ""),
+            GRAPH_DB_URL=self._raw.get("LOCAL_GRAPH_URL", ""),
+            GRAPH_DB_USER=self._raw.get("LOCAL_GRAPH_USERNAME", ""),
+            GRAPH_DB_PASSWORD=self._raw.get("LOCAL_GRAPH_PASSWORD", ""),
+            GRAPH_DB_DATABASE=self._raw.get("LOCAL_DB_NAME", ""),
         )
 
     def _build_storage(self) -> StorageSettings:

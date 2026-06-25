@@ -41,4 +41,4 @@ class EnvironmentLoader:
 
     @staticmethod
     def _find_project_root() -> Path:
-        return Path(__file__).resolve().parent.parent.parent.parent
+        return Path(__file__).resolve().parent.parent.parent.parent.parent

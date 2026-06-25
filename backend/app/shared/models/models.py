@@ -55,6 +55,7 @@ class Chunk(BaseModel):
     section_title: str | None = None
     heading_level: int | None = None
     text: str
+    content_hash: str = ""
     metadata: dict[str, str] = Field(default_factory=dict)
 
 

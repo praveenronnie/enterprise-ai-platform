@@ -65,9 +65,8 @@ def register_ai_services(settings: Settings) -> None:
         max_retries=settings.llm.LLM_MAX_RETRIES,
     )
     container.register("openrouter_provider", provider)
-
     embedding_service = EmbeddingService(
-        model_name=settings.llm.LLM_EMBEDDING_MODEL,
+        model_name=settings.vector_database.VECTOR_EMDEDDING,
     )
     container.register("embedding_service", embedding_service)
 

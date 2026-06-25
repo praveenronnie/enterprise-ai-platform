@@ -27,17 +27,28 @@ class OpenRouterProvider:
         self._model = model
         self._timeout = timeout
         self._max_retries = max_retries
-        self._client = httpx.AsyncClient(
-            timeout=httpx.Timeout(timeout),
-            headers={
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json",
-            },
-        )
+        self._client = None
 
     @property
     def model(self) -> str:
         return self._model
+
+    def _get_client(self) -> httpx.AsyncClient:
+        """Get or create an HTTP client."""
+        try:
+            is_closed = self._client.is_closed
+        except Exception:
+            is_closed = True
+        
+        if self._client is None or is_closed:
+            self._client = httpx.AsyncClient(
+                timeout=httpx.Timeout(self._timeout),
+                headers={
+                    "Authorization": f"Bearer {self._api_key}",
+                    "Content-Type": "application/json",
+                },
+            )
+        return self._client
 
     async def chat_completion(
         self,
@@ -60,10 +71,20 @@ class OpenRouterProvider:
 
         for attempt in range(1, self._max_retries + 1):
             try:
-
-                response = await self._client.post(url, json=payload)
+                client = self._get_client()
+                response = await client.post(url, json=payload)
                 response.raise_for_status()
                 return response.json()
+
+            except (RuntimeError, Exception) as exc:
+                # Event loop or client issue - recreate and retry
+                if "Event loop is closed" in str(exc) or isinstance(exc, RuntimeError):
+                    self._client = None
+                    last_error = exc
+                    if attempt < self._max_retries:
+                        await asyncio.sleep(0.1)
+                    continue
+                raise
 
             except httpx.HTTPStatusError as exc:
                 last_error = exc
@@ -87,11 +108,13 @@ class OpenRouterProvider:
 
     async def health_check(self) -> bool:
         try:
-            response = await self._client.get(f"{self._base_url}/models")
+            client = self._get_client()
+            response = await client.get(f"{self._base_url}/models")
             return response.status_code == 200
         except Exception as exc:
             logger.warning("OpenRouter health check failed: %s", exc)
             return False
 
     async def close(self) -> None:
-        await self._client.aclose()
+        if self._client and not self._client.is_closed:
+            await self._client.aclose()

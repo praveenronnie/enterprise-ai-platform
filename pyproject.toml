@@ -24,5 +24,8 @@ dependencies = [
     "httpx",
     "sentence-transformers",
     "aiofiles>=25.1.0",
+    "sqlalchemy>=2.0.51",
+    "neo4j>=6.2.0",
+    "asyncpg",
 ]
 [tool.uv]
